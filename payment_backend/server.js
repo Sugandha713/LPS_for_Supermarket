@@ -1,9 +1,15 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+// import express from "express";
+// import { json } from "body-parser";
+// import cors from "cors";
+
+const express = require("express")
+const { json } = require("body-parser");
 const cors = require("cors");
 
+
+
 const app = express();
-app.use(bodyParser.json());
+app.use(json());
 app.use(cors());
 
 // Sample route to verify server is working
@@ -20,6 +26,7 @@ const transactions = [];
 
 // Handle Credit/Debit Card Payment
 app.post("/pay/card", (req, res) => {
+    
     const { cardNumber, cardHolderName, expiryDate, cvv, amount } = req.body;
 
     // Validate fields
@@ -28,7 +35,7 @@ app.post("/pay/card", (req, res) => {
     }
 
     // Mock validation (this is just a dummy check)
-    if (cardNumber.length !== 16 || cvv.length !== 3) {
+    if (cardNumber.length !== 20 || cvv.length !== 3) {
         return res.status(400).json({ message: "Invalid card details!" });
     }
 

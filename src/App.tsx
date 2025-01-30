@@ -28,7 +28,7 @@ function App() {
               <Route path="/" element={<Welcome />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
+              <Route element={<Layout />}>
                 <Route path="/home" element={<Home />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/categories/:category" element={<Categories />} />
@@ -43,7 +43,7 @@ function App() {
             </Routes>
           </SearchProvider>
         </CartProvider>
-      </AuthProvider>
+        </AuthProvider>
     </BrowserRouter>
   );
 }

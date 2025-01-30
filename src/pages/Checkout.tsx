@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, clearCart } = useCart();
+  const { items } = useCart();
   const { user } = useAuth();
   const [selectedAddress, setSelectedAddress] = useState(user?.addresses[0]?.id);
   const [paymentMethod, setPaymentMethod] = useState('card');
@@ -18,8 +18,16 @@ export default function Checkout() {
   const total = subtotal + shipping - diamondDiscount;
 
   const handlePlaceOrder = () => {
-    clearCart();
-    navigate('/order-success');
+      navigate('/payment', {
+        state: {
+          total,
+          items,
+          paymentMethod,
+          selectedAddress,
+          useDiamonds,
+          diamondDiscount
+        }
+      }); 
   };
 
   const paymentMethods = [
@@ -190,7 +198,6 @@ export default function Checkout() {
             </div>
             <button
               onClick={handlePlaceOrder}
-              disabled={!selectedAddress || !paymentMethod}
               className="btn-secondary w-full mt-6"
             >
               Place Order
