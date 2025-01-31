@@ -16,6 +16,18 @@ export interface Address {
   isDefault: boolean;
 }
 
+export interface ProductVariant {
+  id: number;
+  name: string;
+  price: number;
+}
+
+export interface ProductColor {
+  id: number;
+  name: string;
+  code: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -23,6 +35,14 @@ export interface Product {
   price: number;
   category: string;
   image: string;
+  brand?: string;
+  rating?: number;
+  reviews?: number;
+  images?: string[];
+  highlights?: string[];
+  specifications?: Record<string, string>;
+  variants?: ProductVariant[];
+  colors?: ProductColor[];
   isNew?: boolean;
 }
 

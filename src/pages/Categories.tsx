@@ -57,7 +57,117 @@ const products = {
       brand: 'Dell'
     }
   ],
-  // Add more products for other categories...
+  watches: [
+    {
+      id: 'w1',
+      name: 'Rolex Submariner',
+      price: 850000,
+      rating: 4.9,
+      image: 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=500&q=80',
+      brand: 'Rolex'
+    },
+    {
+      id: 'w2',
+      name: 'Casio G-Shock',
+      price: 8999,
+      rating: 4.5,
+      image: 'https://images.unsplash.com/photo-1605561401148-74242765d018?w=500&q=80',
+      brand: 'Casio'
+    }
+],
+clothes: [
+  {
+    id: 'c1',
+    name: 'Nike Hoodie',
+    price: 4999,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1585059895525-ace2b53b022b?w=500&q=80',
+    brand: 'Nike'
+  },
+  {
+    id: 'c2',
+    name: 'Levi’s Denim Jacket',
+    price: 6999,
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1616013097748-68e2874b3e5d?w=500&q=80',
+    brand: 'Levi’s'
+  }
+],electronics: [
+  {
+    id: 'e1',
+    name: 'Sony WH-1000XM5 Headphones',
+    price: 29999,
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1592194996308-7b43878e84a0?w=500&q=80',
+    brand: 'Sony'
+  },
+  {
+    id: 'e2',
+    name: 'Samsung Galaxy Tab S8',
+    price: 58999,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1611186871348-d9c522cad5f8?w=500&q=80',
+    brand: 'Samsung'
+  }
+],
+furniture: [
+  {
+    id: 'f1',
+    name: 'Ikea Study Table',
+    price: 7999,
+    rating: 4.5,
+    image: 'https://images.unsplash.com/photo-1598300187583-43a7c5e4d07c?w=500&q=80',
+    brand: 'Ikea'
+  },
+  {
+    id: 'f2',
+    name: 'Wooden King Size Bed',
+    price: 29999,
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1578897368665-d20fe33e3c4c?w=500&q=80',
+    brand: 'HomeTown'
+  }
+],
+beauty: [
+  {
+    id: 'b1',
+    name: 'MAC Matte Lipstick',
+    price: 1999,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1605719946404-4552a182d59e?w=500&q=80',
+    brand: 'MAC'
+  },
+  {
+    id: 'b2',
+    name: 'The Ordinary Niacinamide Serum',
+    price: 1499,
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1582719366144-0ef180812f23?w=500&q=80',
+    brand: 'The Ordinary'
+  }
+],
+sports: [
+  {
+    id: 's1',
+    name: 'Adidas Football',
+    price: 2999,
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1599058917213-d30244a3229a?w=500&q=80',
+    brand: 'Adidas'
+  },
+  {
+    id: 's2',
+    name: 'Yonex Badminton Racket',
+    price: 5999,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1579722826176-0bc8475f40b4?w=500&q=80',
+    brand: 'Yonex'
+  }
+],
+
+
+
+
 };
 
 export default function Categories() {
