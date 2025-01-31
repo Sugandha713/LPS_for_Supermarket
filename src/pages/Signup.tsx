@@ -16,31 +16,16 @@ export default function Signup() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     
-  
     try {
-      // Send signup request to backend API
-      const response = await fetch('http://localhost:5000/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        // Store token in localStorage (or context)
-        localStorage.setItem('token', data.token);
-        navigate('/home'); // Redirect to home page after successful signup
-      } else {
-        setError(data.message || 'Invalid email or password');
-      }
+      // Call signup from context to handle the API request and state update
+      await signup(email, password, name); // Pass name to the signup method
+      
+      // Redirect to home page after successful signup
+      navigate('/home'); 
     } catch (error) {
-      setError('Error:', error);
+      setError('Error: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   };
-  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -53,12 +38,14 @@ export default function Signup() {
             Create your account
           </h2>
         </div>
-        {/* Show error message if login fails */}
+
+        {/* Show error message if signup fails */}
         {error && (
           <div className="text-red-600 text-sm text-center bg-red-100 p-2 rounded-md">
             {error}
           </div>
         )}
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>

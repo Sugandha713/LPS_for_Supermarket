@@ -62,7 +62,6 @@ export default function Payment() {
     try {
       let paymentResponse;
       console.log('Card Details:', cardDetails);
-
   
       if (paymentState.paymentMethod === 'card') {
         paymentResponse = await fetch('http://localhost:5000/pay/card', {
@@ -74,9 +73,7 @@ export default function Payment() {
             ...cardDetails,
             amount: paymentState.total, // Send the amount to the backend
           }),
-          
         });
-        
       } else if (paymentState.paymentMethod === 'upi') {
         paymentResponse = await fetch('http://localhost:5000/pay/upi', {
           method: 'POST',
@@ -90,11 +87,17 @@ export default function Payment() {
           }),
         });
       }
-
+  
       const responseData = await paymentResponse.json();
-      
   
       if (paymentResponse.ok && responseData.status === 'success') {
+        // If diamonds are used, reduce the user's diamond count
+        if (paymentState.useDiamonds) {
+          const newDiamonds = user!.diamonds - paymentState.diamondDiscount;
+          // Update the user state in the AuthContext
+          user!.diamonds = newDiamonds; // You can also call an API to update the user on the backend
+        }
+  
         const newOrder = {
           id: `ORD${Math.random().toString(36).substr(2, 9)}`,
           date: new Date().toISOString(),
@@ -116,7 +119,7 @@ export default function Payment() {
       setLoading(false);
     }
   };
-
+  
   const renderPaymentForm = () => {
     switch (paymentState.paymentMethod) {
       case 'card':

@@ -14,29 +14,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const login = async (email: string, password: string) => {
-    // Simulate API call
-    setUser({
-      id: '1',
-      email,
-      name: 'John Doe',
-      diamonds: 10,
-      addresses: []
-    });
+    try {
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save user data in context and localStorage
+        setUser({
+          id: data.id,
+          email: data.email,
+          name: data.name || 'Not Provided',  // Set default if not available
+          diamonds: data.diamonds,
+          phone: data.phone,
+          addresses: data.addresses || [],
+        });
+        localStorage.setItem('token', data.token);
+      } else {
+        console.error('Login failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    // Simulate API call
-    setUser({
-      id: '1',
-      email,
-      name,
-      diamonds: 0,
-      addresses: []
-    });
+    try {
+      const response = await fetch('http://localhost:5000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Save user data in context
+        setUser({
+          id: data.id,
+          email,
+          name,  // Store the name provided during signup
+          diamonds: 0,
+          phone: '',
+          addresses: [],
+        });
+      } else {
+        console.error('Signup failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('token');
   };
 
   return (

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Package, MapPin, User, Diamond, History } from 'lucide-react';
+import { Package, MapPin, User, Diamond, History, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from "react";
 
 function Profile() {
   const { user } = useAuth();
@@ -27,42 +28,42 @@ function Profile() {
 }
 
 function Orders() {
-  const orders = [
-    {
-      id: 'ORD001',
-      date: '2024-03-15',
-      total: 899,
-      status: 'Delivered',
-      items: ['Premium Wireless Headphones', 'Smart Watch']
-    },
-    {
-      id: 'ORD002',
-      date: '2024-03-10',
-      total: 499,
-      status: 'Processing',
-      items: ['Running Shoes']
-    }
-  ];
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/orders") // Replace with your backend URL
+      .then((res) => res.json())
+      .then((data) => {
+        setOrders(data.orders);
+      })
+      .catch((error) => console.error("Error fetching orders:", error));
+  }, []);
 
   return (
     <div className="space-y-4">
-      {orders.map((order) => (
-        <div key={order.id} className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Order #{order.id}</h3>
-            <span className={`px-3 py-1 rounded-full text-sm ${
-              order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-            }`}>
-              {order.status}
-            </span>
+      {orders.length > 0 ? (
+        orders.map((order) => (
+          <div key={order.orderId} className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold">Order #{order.orderId}</h3>
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                order.status === "Delivered"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-blue-100 text-blue-800"
+              }`}>
+                {order.status}
+              </span>
+            </div>
+            <div className="space-y-2">
+              <p className="text-gray-600">Ordered on: {order.date}</p>
+              <p>Items: {order.items.join(", ")}</p>
+              <p className="font-semibold">Total: ₹{order.totalAmount}</p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <p className="text-gray-600">Ordered on: {order.date}</p>
-            <p>Items: {order.items.join(', ')}</p>
-            <p className="font-semibold">Total: ₹{order.total}</p>
-          </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p className="text-gray-500">No orders found.</p>
+      )}
     </div>
   );
 }
@@ -153,15 +154,17 @@ function DiamondZone() {
   );
 }
 
+
 export default function Account() {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user , logout} = useAuth();
 
   const tabs = [
     { path: '/account', icon: User, label: 'Profile' },
     { path: '/account/orders', icon: Package, label: 'Orders' },
     { path: '/account/addresses', icon: MapPin, label: 'Addresses' },
-    { path: '/account/diamonds', icon: Diamond, label: 'Diamond Zone' }
+    { path: '/account/diamonds', icon: Diamond, label: 'Diamond Zone' },
+    { path: '/logout', icon: LogOut, label: 'Log Out' }
   ];
 
   return (
@@ -194,6 +197,7 @@ export default function Account() {
             })}
           </div>
         </nav>
+
 
         <div className="flex-1">
           <Routes>
