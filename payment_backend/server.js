@@ -35,7 +35,7 @@ app.post("/pay/card", (req, res) => {
     }
 
     // Mock validation (this is just a dummy check)
-    if (cardNumber.length !== 20 || cvv.length !== 3) {
+    if (cardNumber.length !== 16 || cvv.length !== 3) {
         return res.status(400).json({ message: "Invalid card details!" });
     }
 
