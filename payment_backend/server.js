@@ -14,7 +14,6 @@ const JWT_SECRET = "your_secret_key";
 app.use(bodyParser.json());
 app.use(cors());
 
-// Sample route to verify server is working
 app.get("/", (req, res) => {
     res.send("Payment backend is running!");
 });
@@ -77,6 +76,7 @@ app.post("/login", async (req, res) => {
   
       const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
       res.json({ token, user: { name: user.name, email: user.email } });
+
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -85,8 +85,8 @@ app.post("/login", async (req, res) => {
 
 // Protected Route Example
 app.get("/profile", async (req, res) => {
-    const token = req.headers.authorization;
-    if (!token) return res.status(401).json({ message: "Unauthorized" });
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
   
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
@@ -99,13 +99,15 @@ app.get("/profile", async (req, res) => {
   
 
 let orders = []; // Store order details
+let transactions = []; // Store transaction details
+
 
 // Handle Credit/Debit Card Payment
 app.post("/pay/card", (req, res) => {
-    const { cardNumber, cardHolderName, expiryDate, cvv, amount, items } = req.body;
+    const { cardNumber, cardHolderName, expiryDate, cvv, amount } = req.body;
 
     // Validate fields
-    if (!cardNumber || !cardHolderName || !expiryDate || !cvv || !amount || !items) {
+    if (!cardNumber || !cardHolderName || !expiryDate || !cvv || !amount) {
         return res.status(400).json({ message: "All fields are required!" });
     }
 
@@ -121,7 +123,6 @@ app.post("/pay/card", (req, res) => {
     const newOrder = {
         orderId,
         transactionId,
-        items,
         totalAmount: amount,
         status: "Confirmed",
         date: new Date().toISOString().split("T")[0], // Store only date
@@ -132,7 +133,7 @@ app.post("/pay/card", (req, res) => {
     transactions.push({ type: "card", transactionId, amount, status: "success" });
 
     res.status(200).json({
-        message: "Payment successful!",
+        message: "success",
         transactionId,
         orderDetails: newOrder,
     });
@@ -140,10 +141,10 @@ app.post("/pay/card", (req, res) => {
 
 // Handle UPI Payment
 app.post("/pay/upi", (req, res) => {
-    const { upiId, amount, items } = req.body;
+    const { upiId, amount} = req.body;
 
     // Validate fields
-    if (!upiId || !amount || !items) {
+    if (!upiId || !amount) {
         return res.status(400).json({ message: "All fields are required!" });
     }
 
@@ -159,7 +160,6 @@ app.post("/pay/upi", (req, res) => {
     const newOrder = {
         orderId,
         transactionId,
-        items,
         totalAmount: amount,
         status: "Confirmed",
         date: new Date().toISOString().split("T")[0],
@@ -170,7 +170,7 @@ app.post("/pay/upi", (req, res) => {
     transactions.push({ type: "upi", transactionId, amount, status: "success" });
 
     res.status(200).json({
-        message: "Payment successful!",
+        message: "success",
         transactionId,
         orderDetails: newOrder,
     });

@@ -61,8 +61,6 @@ export default function Payment() {
   
     try {
       let paymentResponse;
-      console.log('Card Details:', cardDetails);
-  
       if (paymentState.paymentMethod === 'card') {
         paymentResponse = await fetch('http://localhost:5000/pay/card', {
           method: 'POST',
@@ -71,7 +69,7 @@ export default function Payment() {
           },
           body: JSON.stringify({
             ...cardDetails,
-            amount: paymentState.total, // Send the amount to the backend
+            amount: paymentState.total // Send the amount to the backend
           }),
         });
       } else if (paymentState.paymentMethod === 'upi') {
@@ -87,10 +85,10 @@ export default function Payment() {
           }),
         });
       }
-  
       const responseData = await paymentResponse.json();
+      console.log(responseData);
   
-      if (paymentResponse.ok && responseData.status === 'success') {
+      if (paymentResponse.ok && responseData.message === 'success') {
         // If diamonds are used, reduce the user's diamond count
         if (paymentState.useDiamonds) {
           const newDiamonds = user!.diamonds - paymentState.diamondDiscount;

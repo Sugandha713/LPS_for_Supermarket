@@ -7,12 +7,13 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // Inside Login component
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
-  
+
     try {
       // Send login request to backend API
       const response = await fetch('http://localhost:5000/login', {
@@ -22,12 +23,12 @@ export default function Login() {
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        // Save token to localStorage (or context)
-        localStorage.setItem('token', data.token);
+        // Save token to localStorage under 'authToken' (consistent with Profile)
+        localStorage.setItem('authToken', data.token);
         navigate('/home'); // Redirect to home page after successful login
       } else {
         console.error('Login failed:', data.message);
@@ -36,7 +37,8 @@ export default function Login() {
       console.error('Error:', error);
     }
   };
-  
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">

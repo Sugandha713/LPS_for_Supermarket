@@ -57,11 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
   
       if (response.ok) {
-        // Save user data in context
         setUser({
           id: data.id,
           email,
-          name,  // Store the name provided during signup
+          name,  
           diamonds: 0,
           phone: '',
           addresses: [],
