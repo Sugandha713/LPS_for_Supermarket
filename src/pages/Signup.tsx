@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShoppingBag } from 'lucide-react';
@@ -6,19 +6,24 @@ import { ShoppingBag } from 'lucide-react';
 export default function Signup() {
   const navigate = useNavigate();
   const { signup } = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
     const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
-    const name = formData.get('name') as string;
-
+    
     try {
-      await signup(email, password, name);
-      navigate('/home');
+      // Call signup from context to handle the API request and state update
+      await signup(email, password, name); // Pass name to the signup method
+      
+      // Redirect to home page after successful signup
+      navigate('/home'); 
     } catch (error) {
-      console.error('Signup failed:', error);
+      setError('Error: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   };
 
@@ -33,6 +38,14 @@ export default function Signup() {
             Create your account
           </h2>
         </div>
+
+        {/* Show error message if signup fails */}
+        {error && (
+          <div className="text-red-600 text-sm text-center bg-red-100 p-2 rounded-md">
+            {error}
+          </div>
+        )}
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
