@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Star, TrendingUp } from 'lucide-react';
+import ProductDetails from '../components/ProductDetails';
 
 const products = [
   {
@@ -103,6 +104,7 @@ export default function Home() {
           {products.map((product) => (
             <Link
               key={product.id}
+              product={product}
               to={`/product/${product.id}`}
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
             >
