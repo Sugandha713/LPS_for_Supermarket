@@ -7,6 +7,8 @@ import axios from "axios";
 function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -14,13 +16,14 @@ function Profile() {
     if (token) {
       axios
         .get("http://localhost:5000/profile", {
-          headers: { Authorization: `Bearer ${token}` }, // Add 'Bearer ' prefix to the token
+          headers: { Authorization: `Bearer ${token}` },
         })
-        .then((response: { data: React.SetStateAction<null> }) => {
-          setUser(response.data);  // Set user data in state
+        .then((response) => {
+          setUser(response.data);
+          setFormData(response.data); // Pre-fill form with existing data
           setLoading(false);
         })
-        .catch((error: any) => {
+        .catch((error) => {
           console.error("Error fetching user data", error);
           setLoading(false);
         });
@@ -29,31 +32,125 @@ function Profile() {
     }
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  if (!user) {
-    return <div>Please log in</div>;
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const response = await axios.put(
+        "http://localhost:5000/profile",
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setUser(response.data); // Update the UI with new user data
+      setEditing(false); // Exit edit mode
+    } catch (error) {
+      console.error("Error updating profile", error);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <div>Please log in</div>;
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-2xl font-bold mb-6">Personal Information</h2>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-600">Full Name</label>
-          <p className="mt-1 text-lg">{user?.name || 'N/A'}</p>
+
+      {editing ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded-lg"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded-lg"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Phone
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded-lg"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              className="bg-gray-500 text-white px-4 py-2 rounded-lg"
+              onClick={() => setEditing(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Full Name
+            </label>
+            <p className="mt-1 text-lg">{user?.name || "N/A"}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Email
+            </label>
+            <p className="mt-1 text-lg">{user?.email || "N/A"}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Phone
+            </label>
+            <p className="mt-1 text-lg">{user?.phone || "Not added"}</p>
+          </div>
+
+          <button
+            onClick={() => setEditing(true)}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg"
+          >
+            Edit
+          </button>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-600">Email</label>
-          <p className="mt-1 text-lg">{user?.email || 'N/A'}</p>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-600">Phone</label>
-          <p className="mt-1 text-lg">{user?.phone || 'Not added'}</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -105,26 +202,88 @@ function Orders() {
 }
 
 function Addresses() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth(); // Ensure setUser is available
+  const [newAddress, setNewAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    pincode: "",
+    isDefault: false,
+  });
+
+  const handleChange = (e) => {
+    setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const response = await axios.put("http://localhost:5000/address", newAddress, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUser((prevUser) => ({ ...prevUser, addresses: response.data.addresses })); // Update local state
+      setNewAddress({ street: "", city: "", state: "", pincode: "", isDefault: false }); // Reset form
+    } catch (error) {
+      console.error("Error adding address:", error);
+    }
+  };
+
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {user?.addresses?.length > 0 ? (
-        user.addresses.map((address) => (
-          <div key={address.id} className="bg-white rounded-lg shadow p-6">
-            {address.isDefault && (
-              <span className="inline-block bg-secondary/10 text-secondary text-sm px-2 py-1 rounded mb-2">
-                Default Address
-              </span>
-            )}
-            <p className="font-semibold mb-2">{address.street}</p>
-            <p className="text-gray-600">
-              {address.city}, {address.state} - {address.pincode}
-            </p>
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-500">No addresses found.</p>
-      )}
+    <div>
+      <h2 className="text-xl font-bold mb-4">Your Addresses</h2>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {user?.addresses?.length > 0 ? (
+          user.addresses.map((address) => (
+            <div key={address.id} className="bg-white rounded-lg shadow p-6">
+              {address.isDefault && (
+                <span className="inline-block bg-secondary/10 text-secondary text-sm px-2 py-1 rounded mb-2">
+                  Default Address
+                </span>
+              )}
+              <p className="font-semibold mb-2">{address.street}</p>
+              <p className="text-gray-600">
+                {address.city}, {address.state} - {address.pincode}
+              </p>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500">No addresses found.</p>
+        )}
+      </div>
+
+      {/* Address Form */}
+      <h2 className="text-xl font-bold mt-6">Add New Address</h2>
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 mt-4 space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-600">Street</label>
+          <input type="text" name="street" value={newAddress.street} onChange={handleChange} className="w-full p-2 border rounded" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-600">City</label>
+          <input type="text" name="city" value={newAddress.city} onChange={handleChange} className="w-full p-2 border rounded" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-600">State</label>
+          <input type="text" name="state" value={newAddress.state} onChange={handleChange} className="w-full p-2 border rounded" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-600">Pincode</label>
+          <input type="text" name="pincode" value={newAddress.pincode} onChange={handleChange} className="w-full p-2 border rounded" required />
+        </div>
+        <div>
+          <label className="flex items-center space-x-2 text-gray-600">
+            <input type="checkbox" name="isDefault" checked={newAddress.isDefault} onChange={(e) => setNewAddress({ ...newAddress, isDefault: e.target.checked })} />
+            <span>Set as Default Address</span>
+          </label>
+        </div>
+        <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
+          Add Address
+        </button>
+      </form>
     </div>
   );
 }

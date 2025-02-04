@@ -17,20 +17,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch('http://localhost:5000/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
 
       if (response.ok) {
-        // Save user data in context and localStorage
         setUser({
           id: data.id,
           email: data.email,
-          name: data.name || 'Not Provided',  // Set default if not available
+          name: data.name || 'Not Provided',
           diamonds: data.diamonds,
           phone: data.phone,
           addresses: data.addresses || [],
@@ -48,19 +45,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch('http://localhost:5000/signup', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name }),
       });
 
       const data = await response.json();
-  
+
       if (response.ok) {
         setUser({
           id: data.id,
           email,
-          name,  
+          name,
           diamonds: 0,
           phone: '',
           addresses: [],
@@ -79,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, setUser, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

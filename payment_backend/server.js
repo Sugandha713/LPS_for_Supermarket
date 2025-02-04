@@ -33,6 +33,17 @@ const UserSchema = new mongoose.Schema({
     name: String,
     email: { type: String, unique: true },
     password: String,
+    phone : String,
+    addresses: [
+      {
+        id: String,
+        street: String,
+        city: String,
+        state: String,
+        pincode: String,
+        isDefault: Boolean,
+      },
+    ],
   });
   
 const User = mongoose.model("User", UserSchema);
@@ -94,6 +105,57 @@ app.get("/profile", async (req, res) => {
       res.json(user);
     } catch (err) {
       res.status(401).json({ message: "Invalid token" });
+    }
+  });
+  
+app.put("/profile", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+  
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      // Update user fields
+      const { name, email, phone } = req.body;
+      user.name = name || user.name;
+      user.email = email || user.email;
+      user.phone = phone || user.phone;
+  
+      await user.save();
+  
+      res.json({ name: user.name, email: user.email, phone: user.phone });
+    } catch (err) {
+      res.status(500).json({ message: "Error updating profile", error: err.message });
+    }
+  });
+
+app.put("/address", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+  
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      const newAddress = {
+        id: new mongoose.Types.ObjectId().toString(), // Generate a unique ID
+        street: req.body.street,
+        city: req.body.city,
+        state: req.body.state,
+        pincode: req.body.pincode,
+        isDefault: req.body.isDefault || false,
+      };
+  
+      user.addresses.push(newAddress);
+      await user.save();
+  
+      res.json({ addresses: user.addresses });
+    } catch (err) {
+      console.error("Error adding address:", err);
+      res.status(500).json({ message: "Error adding address" });
     }
   });
   
