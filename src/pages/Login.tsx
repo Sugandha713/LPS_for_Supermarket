@@ -7,6 +7,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // Inside Login component
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -14,12 +15,29 @@ export default function Login() {
     const password = formData.get('password') as string;
 
     try {
-      await login(email, password);
-      navigate('/home');
+      // Send login request to backend API
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save token to localStorage under 'authToken' (consistent with Profile)
+        localStorage.setItem('authToken', data.token);
+        navigate('/home'); // Redirect to home page after successful login
+      } else {
+        console.error('Login failed:', data.message);
+      }
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Error:', error);
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
