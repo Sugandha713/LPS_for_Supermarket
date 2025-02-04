@@ -16,7 +16,8 @@ import Layout from './components/Layout';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { SearchProvider } from './context/SearchContext';
-import PrivateRoute from './components/PrivateRoute';
+import Logout from './pages/Logout';  
+// import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -28,7 +29,8 @@ function App() {
               <Route path="/" element={<Welcome />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
+              <Route path="/logout" element={<Logout />} /> 
+              <Route element={<Layout />}>
                 <Route path="/home" element={<Home />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/categories/:category" element={<Categories />} />
@@ -43,7 +45,7 @@ function App() {
             </Routes>
           </SearchProvider>
         </CartProvider>
-      </AuthProvider>
+        </AuthProvider>
     </BrowserRouter>
   );
 }

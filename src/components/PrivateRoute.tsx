@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate , Outlet} from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface PrivateRouteProps {
@@ -9,9 +9,7 @@ interface PrivateRouteProps {
 export default function PrivateRoute({ children }: PrivateRouteProps) {
   const { user } = useAuth();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  return user ? <Outlet /> : <Navigate to="/login" />;
 
   return <>{children}</>;
 }
