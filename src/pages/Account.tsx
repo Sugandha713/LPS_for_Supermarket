@@ -42,7 +42,7 @@ function Profile() {
 
     try {
       const response = await axios.put(
-        "http://localhost:5000/profile",
+        "https://lps-for-supermarket.onrender.com/profile",
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
