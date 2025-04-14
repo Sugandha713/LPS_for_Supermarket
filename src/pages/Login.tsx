@@ -21,7 +21,7 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email : "siddu@gmail.com", password : "123456789" }),
+        body: JSON.stringify({ email : "bala123@gmail.com", password : "bala123" }),
       });
 
       const data = await response.json();
