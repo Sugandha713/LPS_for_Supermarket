@@ -6,47 +6,48 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = "your_secret_key"; 
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(bodyParser.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-    res.send("Payment backend is running!");
+  res.send("Payment backend is running!");
 });
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// Connect to MongoDB
+// ✅ Connect to MongoDB Atlas using environment variable
 mongoose
-  .connect("mongodb://127.0.0.1:27017/authDB", {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+  .then(() => console.log("MongoDB Connected to Atlas"))
+  .catch((err) => console.log("MongoDB Connection Error:", err));
 
 // User Schema
 const UserSchema = new mongoose.Schema({
-    name: String,
-    email: { type: String, unique: true },
-    password: String,
-    phone : String,
-    addresses: [
-      {
-        id: String,
-        street: String,
-        city: String,
-        state: String,
-        pincode: String,
-        isDefault: Boolean,
-      },
-    ],
-  });
-  
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+  phone: String,
+  addresses: [
+    {
+      id: String,
+      street: String,
+      city: String,
+      state: String,
+      pincode: String,
+      isDefault: Boolean,
+    },
+  ],
+});
+
 const User = mongoose.model("User", UserSchema);
+
 
 // Signup Route
 app.post("/signup", async (req, res) => {
