@@ -15,7 +15,7 @@ function Profile() {
 
     if (token) {
       axios
-        .get("http://localhost:5000/profile", {
+        .get("https://lps-for-supermarket.onrender.com/profile", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -160,7 +160,7 @@ function Orders() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/orders") // Replace with your backend URL
+    fetch("https://lps-for-supermarket.onrender.com/orders") // Replace with your backend URL
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data.orders)) {
@@ -220,7 +220,7 @@ function Addresses() {
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await axios.put("http://localhost:5000/address", newAddress, {
+      const response = await axios.put("https://lps-for-supermarket.onrender.com/address", newAddress, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
