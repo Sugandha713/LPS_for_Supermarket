@@ -21,13 +21,14 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email : "siddu@gmail.com", password : "123456789" }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         // Save token to localStorage under 'authToken' (consistent with Profile)
+        alert("Login Sucessful");
         localStorage.setItem('authToken', data.token);
         navigate('/home'); // Redirect to home page after successful login
       } else {
@@ -85,6 +86,7 @@ export default function Login() {
             Sign up
           </Link>
         </p>
+        <h4 className="mt-6 text-center font-bold text-gray-900"> Enter some random credentials click on Signin Button </h4>
       </div>
     </div>
   );
