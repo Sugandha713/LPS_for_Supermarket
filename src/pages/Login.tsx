@@ -16,18 +16,19 @@ export default function Login() {
 
     try {
       // Send login request to backend API
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('https://lps-for-supermarket.onrender.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email : "bala123@gmail.com", password : "bala123" }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         // Save token to localStorage under 'authToken' (consistent with Profile)
+        alert("Login Sucessful");
         localStorage.setItem('authToken', data.token);
         navigate('/home'); // Redirect to home page after successful login
       } else {
@@ -85,6 +86,7 @@ export default function Login() {
             Sign up
           </Link>
         </p>
+        <h4 className="mt-6 text-center font-bold text-gray-900"> Enter some random credentials click on Signin Button </h4>
       </div>
     </div>
   );

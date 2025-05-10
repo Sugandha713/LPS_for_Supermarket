@@ -62,7 +62,7 @@ export default function Payment() {
     try {
       let paymentResponse;
       if (paymentState.paymentMethod === 'card') {
-        paymentResponse = await fetch('http://localhost:5000/pay/card', {
+        paymentResponse = await fetch('https://lps-for-supermarket.onrender.com/pay/card', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export default function Payment() {
           }),
         });
       } else if (paymentState.paymentMethod === 'upi') {
-        paymentResponse = await fetch('http://localhost:5000/pay/upi', {
+        paymentResponse = await fetch('https://lps-for-supermarket.onrender.com/pay/upi', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
